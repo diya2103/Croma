@@ -1,0 +1,39 @@
+<?php
+						include("connection.php");
+						$sel1 = "select * from category";
+						$res1 = mysqli_query($conn,$sel1);
+						while($row1 = mysqli_fetch_array($res1))
+						{
+							$catid = $row1['category_id'];
+						?>
+						
+						<li class="nav-item submenu dropdown">
+							<a href="#" class="dropdown-toggle nav-link hyper" data-toggle="dropdown" ><span><?php echo $row1['category_name'] ?> <b class="caret"></b></span></a>
+								<ul class="dropdown-menu multi">
+									<div class="row">
+										<?php
+										$sel16 = "select * from subcategory where cid = '$catid'";
+										$res16 = mysqli_query($conn,$sel16);										
+										?>
+										<div class="col-sm-4">
+											<ul class="multi-column-dropdown">
+												<?php
+												while($row16 = mysqli_fetch_array($res16))
+												{
+												?>
+												<li class="nav-item"><a href="product.php?subid=<?php echo $row16['subcategory_id'] ?>&cid=<?php echo $row1['category_id'] ?>" class="nav-link"><?php echo $row16['subcategory_name'] ?></a></li>
+												<?php
+												}
+												?>												
+											</ul>										
+										</div>										
+										<div class="col-sm-4 w3l">
+											<!--<a href="women.html"><img src="images/qwqw.jpg" class="img-responsive" alt=""></a>-->
+										</div>
+										<div class="clearfix"></div>
+									</div>	
+								</ul>
+						</li>
+						<?php
+						}
+						?>
