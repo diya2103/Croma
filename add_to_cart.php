@@ -99,7 +99,7 @@ if (isset($_REQUEST['btn_place'])) {
 								$tol = 0;
 								while ($wcart = mysqli_fetch_array($rcart)) {
 									$qty = $wcart['cc_qty'];
-									$price = $wcart['cc_price'];
+									$price = $wcart['pro_pur_price'];
 									$tol = $price * $qty;
 									$pecode = $wcart['pe_code'];
 									$simg = "select * from product_entry where pe_code = '$pecode'";
@@ -115,7 +115,7 @@ if (isset($_REQUEST['btn_place'])) {
 										<td class="t-data"><?php echo $wcart['category_name'] ?></td>
 										<td class="t-data" style="width:150px"><?php echo $wcart['subcategory_name'] ?> - <?php echo $wcart['pname'] ?></td>
 										<td class="t-data"><input type="number" name="txt_qty" class="form-control" onKeyUp="validate('<?php echo $wcart['cc_id'] ?>',this.value)" min="1" max="<?php echo $wcart['pro_pur_qty'];  ?>" value="1"></td>
-										<td class="t-data" style="width:150px"><!--<i class="fa fa-inr"></i>--><?php echo number_format($wcart['cc_price'], 2) ?> Rs. </td>
+										<td class="t-data" style="width:150px"><!--<i class="fa fa-inr"></i>--><?php echo number_format($wcart['pro_pur_price'], 2) ?> Rs. </td>
 
 
 										<td class="t-data" id="<?php echo $wcart['cc_id'] ?>"><!--<i class="fa fa-inr"></i>--><?php echo number_format($tol, 2) ?> Rs. </td>
@@ -139,12 +139,12 @@ if (isset($_REQUEST['btn_place'])) {
 								$price1 = 0;
 								$tol1 = 1;
 								$gt1 = 0;
-								$scarq = "select * from c_cart where cc_username = '$email' AND cc_status = 'cart'";
+								$scarq = "select * from c_cart  JOIN product_size_price ON c_cart.psp_id = product_size_price.psp_id  where cc_username = '$email' AND cc_status = 'cart'";
 								$rcarq = mysqli_query($conn, $scarq);
 								while ($wcarq = mysqli_fetch_array($rcarq)) {
 									$ct++;
 									$qty1 = $wcarq['cc_qty'];
-									$price1 = $wcarq['cc_price'];
+									$price1 = $wcarq['pro_pur_price'];
 									$tol1 = $price1 * $qty1;
 									$gt1 = $gt1 + $tol1;
 								}

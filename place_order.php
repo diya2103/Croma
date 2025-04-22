@@ -26,12 +26,17 @@ if(isset($_REQUEST['btn_submit'])) {
     $update = "update c_cart set cp_code = '$c', cc_status = '$st' where cc_username = '$user' AND cc_status = 'cart'";
     mysqli_query($conn,$update);
     
+    // Delete cart items to clear the cart
+    $delete_cart = "delete from c_cart where cc_username = '$user' AND cc_status = 'ordered'";
+    mysqli_query($conn, $delete_cart);
+    
     // Redirect to cart page or order confirmation
     header("location:add_to_cart.php");
+    exit();
 }
 
 // For Razorpay payment handling
-if(isset($_REQUEST['razorpay_payment_id'])) {
+if (isset($_REQUEST['razorpay_payment_id'])) {
     $payment_id = $_REQUEST['razorpay_payment_id'];
     $nm = $_REQUEST['txt_nm'];
     $add = $_REQUEST['txt_add'];
@@ -41,27 +46,46 @@ if(isset($_REQUEST['razorpay_payment_id'])) {
     $user = $_SESSION['customer'];
     $c = 10001;
     $ss = "select * from c_purchase";
-    $rr = mysqli_query($conn,$ss);
-    while($ww = mysqli_fetch_array($rr)) {
+    $rr = mysqli_query($conn, $ss);
+    while ($ww = mysqli_fetch_array($rr)) {
         $c = $ww['cp_id'] + 10001;
     }
     $date = date('Y-m-d');
     $status = 'ordered';
-    
+
     // Create the order with payment info
     $insert = "insert into c_purchase values('','$c','$user','$nm','$add','$cno','$cnoa','$pin','$date','$status')";
-    mysqli_query($conn,$insert);
-    
-    // You may want to store payment details in another table
+    if (!mysqli_query($conn, $insert)) {
+        die("Error creating order: " . mysqli_error($conn));
+    }
+
+    // Store payment details
     $payment_insert = "insert into payment_details values('','$c','$payment_id','razorpay','$date')";
-    mysqli_query($conn,$payment_insert);
+    if (!mysqli_query($conn, $payment_insert)) {
+        die("Error storing payment details: " . mysqli_error($conn));
+    }
+
+    // Update cart items to mark them as processed (fix the status variable)
+    $update = "update c_cart set cp_code = '$c', cc_status = 'ordered' 
+               where cc_username = '$user' AND cc_status = 'cart'";
+    if (!mysqli_query($conn, $update)) {
+        die("Error updating cart status: " . mysqli_error($conn));
+    }
+
+    // Delete cart items with proper user check
+    $delete_cart = "delete from c_cart 
+                    where cc_username = '$user' 
+                    AND (cc_status = 'ordered' OR cc_status = 'cart')";
+    if (!mysqli_query($conn, $delete_cart)) {
+        die("Error clearing cart: " . mysqli_error($conn));
+    }
+
+    // Add debug logging
+    error_log("Cart cleared for user: $user");
     
-    // Update cart items
-    $update = "update c_cart set cp_code = '$c', cc_status = 'ordered' where cc_username = '$user' AND cc_status = 'cart'";
-    mysqli_query($conn,$update);
-    
-    // Redirect to success page
+    // Redirect to cart page
     header("location:add_to_cart.php");
+    exit();
 }
 
 ?>
@@ -102,7 +126,8 @@ $(document).ready(function() {
         if (paymentMethod === "razorpay") {
             initiateRazorpay();
         } else if (paymentMethod === "cash") {
-            // Submit the form directly for COD
+            // Submit the form directly for 
+			
             $("#orderForm").submit();
         } else {
             alert("Please select a payment method");
@@ -115,16 +140,13 @@ function initiateRazorpay() {
     var amount = document.getElementById('razorpay_amount').value;
     
     var options = {
-        "key": "rzp_test_aX7dlNyH1Xp2tx", // Your Razorpay API Key
+        "key": "rzp_test_7cAYWDrHyJZOBd", // Your Razorpay API Key
         "amount": amount, // Amount in paise
         "currency": "INR",
         "name": "Your Store Name",
         "description": "Order Payment",
         "image": "your-logo.png",
         "handler": function(response) {
-            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
-
-            // Store the payment ID in a hidden input
             let form = document.getElementById('orderForm');
             let input = document.createElement("input");
             input.type = "hidden";
@@ -132,7 +154,7 @@ function initiateRazorpay() {
             input.value = response.razorpay_payment_id;
             form.appendChild(input);
 
-            // Submit the form
+            form.action = "place_order.php";
             form.submit();
         },
         "prefill": {

@@ -75,19 +75,6 @@ include("session_customer.php");
 
     <!-- ================ trending product section start ================= -->
 
-    <?php
-    $select = "SELECT * FROM product_size_price 
-    JOIN product_entry ON product_size_price.pe_code = product_entry.pe_code 
-    WHERE product_size_price.psp_id = psp_id";
-
-    $res = mysqli_query($conn, $select);
-    ?>
-
-    <div class="trending-products">
-      <!-- Subcategories or Products will load here dynamically -->
-    </div>
-
-      
     <!-- index clicked products -->
 
     <?php if ($indexClicked) { 
@@ -106,10 +93,10 @@ include("session_customer.php");
           <?php if ($res && mysqli_num_rows($res) > 0) {
             while ($rows = mysqli_fetch_array($res)) {
           ?>
-              <div class="col-md-6 col-lg-4 col-xl-3">
+              <div class="col-md-6 col-lg-4 col-xl-3 mx-8">
                 <div class="card text-center card-product">
-                  <div class="card-product__img">
-                    <img class="card-img" src="admin/Product_Upload/<?php echo $rows['product_image']; ?>" height="200px" width="200px" alt="">
+                  <div class="card-product__img w-100 h-100">
+                    <img class="card-img" style="background: darkgray;" src="admin/Product_Upload/<?php echo $rows['product_image']; ?>" alt="">
                     <ul class="card-product__imgOverlay">
                       <li>
                         <button>
@@ -128,11 +115,8 @@ include("session_customer.php");
                     </h4>
                     <p class="card-product__price">
                       ₹<?php
-                        $cgst = $rows['cgst'];
-                        $sgst = $rows['sgst'];
-                        $tgst = $cgst + $sgst;
+                       
                         $sprice = $rows['pro_sale_price'];
-                        $gstpi = $sprice * $tgst / 100;
                         echo $sprice + $gstpi;
                         ?>
                     </p>
@@ -171,10 +155,10 @@ include("session_customer.php");
           <?php while ($rows = mysqli_fetch_array($res)) {
             // print_r($rows);die;
           ?>
-            <div class="col-md-6 col-lg-4 col-xl-3 mx-8">
+            <div class="col-md-12 col-lg-4 col-xl-3 mx-8">
               <div class="card text-center card-product">
                 <div class="card-product__img w-100 h-100">
-                  <img class="card-img" src="admin/Product_Upload/<?php echo $rows['product_image']; ?>" height="200px" width="200px" alt="">
+                  <img class="card-img" style="background: darkgray;" src="admin/Product_Upload/<?php echo $rows['product_image']; ?>" alt="">
                   <ul class="card-product__imgOverlay">
                     <li><button><a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>"><i class="ti-shopping-cart"></i></a></button></li>
                   </ul>
@@ -183,15 +167,9 @@ include("session_customer.php");
                   <p></p>
                   <h4 class="card-product__title"><a href="customersingle_product.php?p_id=<?php echo $rows['p_id']; ?>"><?php echo $rows['pcolor']; ?></a></h4>
                   <p class="card-product__price">₹<?php
-                                                  $total = 0;
-                                                  $tgst = 0;
-                                                  $gstpi = 0;
-                                                  $cgst = $rows['cgst'];
-                                                  $sgst = $rows['sgst'];
-                                                  $tgst = $cgst + $sgst;
+                                                  
                                                   $sprice = $rows['pro_sale_price'];
-                                                  $gstpi = $sprice * $tgst / 100;
-
+                                                  
                                                   echo $total = $sprice + $gstpi; //echo $rows['pro_sale_price'];  
                                                   ?></p>
                   <a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>" class="btn btn-primary">View</a>
@@ -462,76 +440,6 @@ include("session_customer.php");
   <!--================ Start footer Area  =================-->
   <?php include("customer_footer.php"); ?>
   <!--================ End footer Area  =================-->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      $("#categoryDropdown").change(function() {
-        var catid = $(this).val(); // Get selected category ID
-
-        if (catid) {
-          $.ajax({
-            url: "fetch_subcategories.php",
-            type: "POST",
-            data: {
-              category_id: catid
-            },
-            success: function(data) {
-              $(".trending-products").html(data); // Display products in trending section
-            }
-          });
-        }
-      });
-    });
-  </script>
-  <!-- to fetch subcategories -->
- 
-  <script>
-    $(document).ready(function() {
-      $("#categoryDropdown").change(function() {
-        var category_id = $(this).val();
-
-        if (category_id !== "") {
-          $.ajax({
-            url: "fetch_subcategories.php",
-            method: "POST",
-            data: {
-              category_id: category_id
-            }, // Correct key name
-            success: function(response) {
-              $("#subcategory").html(response);
-            }
-          });
-        } else {
-          $("#subcategory").html('<option value="">Selectyyt Subcategory</option>');
-        }
-      });
-    });
-  </script>
-
-  <!-- to fetch products -->
-
-  <script>
-    $(document).ready(function () {
-  $('#subcategory').change(function () {
-    var subcat_id = $(this).val();
-
-    if (subcat_id !== "") {
-      $.ajax({
-        url: "fetch_products_by_subcategory.php",
-        type: "POST",
-        data: { subcategory_id: subcat_id },
-        success: function (data) {
-          $(".trending-products").html(data); // Load filtered products
-        }
-      });
-    } else {
-      $(".trending-products").html(""); // Optional: Clear if no subcategory selected
-    }
-  });
-});
-
-  </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 

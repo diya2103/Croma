@@ -1,3 +1,6 @@
+<head>
+
+</head>
 <section class="section-margin calc-60px">
   <div class="container">
 
@@ -47,7 +50,6 @@
   <?php }
   } ?>
 </div>
-
 
   </div>
 </section>

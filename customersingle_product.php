@@ -200,9 +200,6 @@ function magnify(imgID, zoom) {
 				                    $total = 0;
 								    $tgst = 0;
 								    $gstpi = 0;
-								    $cgst = $row['cgst'];
-									$sgst = $row['sgst'];
-									$tgst = $cgst + $sgst;
 									$sprice = $row['pro_sale_price'];
 									$gstpi = $sprice * $tgst / 100;
 									

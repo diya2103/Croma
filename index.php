@@ -8,23 +8,48 @@ include("session_customer.php");
 <head>
   <style>
     .carousel-item {
-  background-color: #000; /* or darkgrey or match your image background */
-}
+      background-color: #000;
+      /* or darkgrey or match your image background */
+    }
 
+    .product-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-img {
+      transition: transform 0.3s ease;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .product-card:hover .product-img {
+      transform: scale(1.05);
+    }
   </style>
 
-<link rel="preload" as="image" href="img/tv.webp">
-<link rel="preload" as="image" href="img/pc.webp">
-<link rel="preload" as="image" href="img/iphone.webp">
+
+  </st>
+
+  <link rel="preload" as="image" href="img/tv.webp">
+  <link rel="preload" as="image" href="img/pc.webp">
+  <link rel="preload" as="image" href="img/iphone.webp">
 
 
   <?php include("css.php"); ?>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Bootstrap Bundle JS (correct one for 5.x) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap Bundle JS (correct one for 5.x) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </head>
 
@@ -36,30 +61,30 @@ include("session_customer.php");
   <main class="site-main">
 
     <!--================ Hero banner start =================-->
-    <div id="carouselExampleControls" class="carousel slide carousel-fade" data-bs-ride="carousel" >
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img class="d-block w-100" src="img/tv.webp" alt="First slide" style="height:577px">
+    <div id="carouselExampleControls" class="carousel slide carousel-fade" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img class="d-block w-100" src="img/tv.webp" alt="First slide" style="height:577px">
+        </div>
+        <div class="carousel-item">
+          <img class="d-block w-100" src="img/pc.webp" alt="Second slide" style="height:577px">
+        </div>
+        <div class="carousel-item">
+          <img class="d-block w-100" src="img/iphone.webp" alt="Third slide" style="height:577px">
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
     </div>
-    <div class="carousel-item">
-      <img class="d-block w-100" src="img/pc.webp" alt="Second slide" style="height:577px">
-    </div>
-    <div class="carousel-item">
-      <img class="d-block w-100" src="img/iphone.webp" alt="Third slide" style="height:577px">
-    </div>
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div>
 
     <!-- Start Filter Bar -->
-   
+
     <!-- End Filter Bar -->
 
     <?php
@@ -94,20 +119,19 @@ include("session_customer.php");
           ?>
 
             <?php while ($row = mysqli_fetch_array($res)) {  ?>
-              <div class="col-md-6 col-lg-4 col-xl-3">
-                <div class="card text-center card-product">
-                  <div class="card-product__img">
-                    <img class="card-img" src="admin/Product_Upload/<?php echo $row['product_image']; ?>" alt="" style="background-color: darkgrey;">
+              <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card border-0 shadow-sm h-100 product-card">
+                  <div class="position-relative overflow-hidden" style="background-color: darkgray;">
+                    <img src="admin/Product_Upload/<?php echo $row['product_image']; ?>" class="card-img-top img-fluid product-img" alt="<?php echo $row['pcolor']; ?>">
                   </div>
-                  <div class="card-body">
-                    <p></p>
-                    <!-- <a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>"> -->
-                    <h4 class="card-product__title"><?php echo $row['pcolor']; ?></h4>
-                    <p class="card-product__price">₹<?php echo $row['pro_sale_price'] ?></p>
-                    <a href="customer_product.php?psp_id=<?php echo isset($row['psp_id']) ? $row['psp_id'] : 'MISSING'; ?>" class="btn btn-primary">View</a>
+                  <div class="card-body text-center">
+                    <h6 class="card-subtitle text-muted mb-1"><?php echo $row['pcolor']; ?></h6>
+                    <h5 class="card-title fw-bold mb-2">₹<?php echo $row['pro_sale_price']; ?></h5>
+                    <a href="customer_product.php?psp_id=<?php echo $row['psp_id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill">View Product</a>
                   </div>
                 </div>
               </div>
+
             <?php } ?>
           <?php } ?>
         </div>
@@ -119,7 +143,6 @@ include("session_customer.php");
 
 
   <!--================ Start footer Area  =================-->
-  <?php include("footer.php"); ?>
   <!--================ End footer Area  =================-->
 
 
@@ -180,27 +203,28 @@ include("session_customer.php");
   <!-- to fetch products -->
 
   <script>
-    $(document).ready(function () {
-  $('#subcategory').change(function () {
-    var subcat_id = $(this).val();
+    $(document).ready(function() {
+      $('#subcategory').change(function() {
+        var subcat_id = $(this).val();
 
-    if (subcat_id !== "") {
-      $.ajax({
-        url: "fetch_products_by_subcategory.php",
-        type: "POST",
-        data: { subcategory_id: subcat_id },
-        success: function (data) {
-          $(".trending-products").html(data); // Load filtered products
+        if (subcat_id !== "") {
+          $.ajax({
+            url: "fetch_products_by_subcategory.php",
+            type: "POST",
+            data: {
+              subcategory_id: subcat_id
+            },
+            success: function(data) {
+              $(".trending-products").html(data); // Load filtered products
+            }
+          });
+        } else {
+          $(".trending-products").html(""); // Optional: Clear if no subcategory selected
         }
       });
-    } else {
-      $(".trending-products").html(""); // Optional: Clear if no subcategory selected
-    }
-  });
-});
-
+    });
   </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

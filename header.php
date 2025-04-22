@@ -2,6 +2,8 @@
 include("connection.php");
 include("session_customer.php");
 ?>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
 <style>
     .custom-text {
         font-family: "Roboto", sans-serif;
@@ -67,45 +69,38 @@ include("session_customer.php");
             </li>
         </ul>
 
-        <ul class="nav-shop" style="margin-left: -315.2px; padding-top: 20px;">
-            <!-- <li class="nav-item"><button><i class="ti-search"></i></button></li> -->
-            <!-- <li class="nav-item"><button><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button> </li> -->
-            <?php if (isset($_SESSION['customer'])) {
+        <ul class="nav-shop" style="margin-left: -315.2px; ">
+						<!-- <li class="nav-item"><button><i class="ti-search"></i></button></li> -->
+						<!-- <li class="nav-item"><button><i class="ti-shopping-cart"></i><span class="nav-shop__circle">3</span></button> </li> -->
+						<?php if (isset($_SESSION['customer'])) {
 
-            ?>
-                
-
-
-                <li class="nav-item"><a href="add_to_cart.php" class="notification"><span><i class="ti-shopping-cart" style="font-size:25px;color:dimgrey" title="Cart"></i></span><span class="badge" style="background-color:dimgrey" title="Cart"><?php $scart1 = "select * from c_cart
+						?>
+							<a href="add_to_cart.php" class="notification"><span><i class="ti-shopping-cart" style="font-size:25px;color:orange"></i></span><span class="badge" style="background-color:#FF6600"><?php $scart1 = "select * from c_cart
 		  			join product_size_price on product_size_price.psp_id = c_cart.psp_id
 					join product_entry on product_size_price.pe_code = product_entry.pe_code
 					where cc_username = '$email' AND cc_status = 'cart'";
-                                                                                                                                                                                                                                                        $rcart1 = mysqli_query($conn, $scart1);
-                                                                                                                                                                                                                                                        echo  $abc = mysqli_num_rows($rcart1);
-                                                                                                                                                                                                                                                        ?> </span></a></li>
-                <li class="nav-item" style="margin-right: 115px; margin-left: -17px ;" >
-                    <div class="dropdown">
+																																																					$rcart1 = mysqli_query($conn, $scart1);
+																																																					echo  $abc = mysqli_num_rows($rcart1);
+																																																					?> </span></a>
+							<li class="nav-item" style="margin-left: 14.8px;">
+								<div class="dropdown">
+									<button class="dropbtn"><b class="button button-header" style="color:red"><?php echo $fullname; ?></b></button>
+									<div class="dropdown-content">
+										<a href="myorder.php">My Order</a>
+										<a href="wishlist.php">Wishlist</a>
+										<a href="viewprofile.php">View Profile</a>
+										<a href="changepassword.php">Change Password</a>
+										<a href="logout.php">Logout</a>
 
-                        <button class="dropbtn">
+									</div>
+								</div>
+							</li>
 
-                            <b class="button button-header" style="color:dimgrey; padding: 10px 25px;">
-                                <img src="<?php echo $image; ?>" alt="User Image" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
-                                <?php echo $fullname; ?></b></button>
-                        <div class="dropdown-content">
-                            <a href="myorder.php" class="far fa-clipboard"> <span class="custom-text">My Order</span></a>
-                            <a href="wishlist.php" class="far fa-heart"> <span class="custom-text">Wishlist</span></a>
-                            <a href="viewprofile.php" class="far fa-user"> <span class="custom-text">View Profile</span></a>
-                            <a href="changepassword.php" class="fas fa-key"> <span class="custom-text">Change Password</span></a>
-                            <a href="logout.php" class="icon icon-logout myaccount-Icon fas fa-right-from-bracket"><span class="custom-text">Logout</span></a>
-                        </div>
-                    </div>
-                </li>
-
-                <!--<li class="nav-item"><a class="button button-header" href="logout.php">Logout</a></li>-->
-            <?php  } else { ?>
-                <li class="nav-item"><a class="button button-header" href="login.php">Login</a></li>
-            <?php } ?>
-        </ul>
+							<!--<li class="nav-item"><a class="button button-header" href="logout.php">Logout</a></li>-->
+						<?php  } else { ?>
+							<li class="nav-item"><a class="button button-header" href="login.php">Login</a></li>
+						<?php } ?>
+					</ul>
         </div>
     </nav>
 
