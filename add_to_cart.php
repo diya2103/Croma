@@ -15,6 +15,13 @@ if (isset($_REQUEST['btn_place'])) {
 	//$a=$_REQUEST['a'];
 	header("location:place_order.php");
 }
+
+// Add success message handling
+if (isset($_GET['payment']) && $_GET['payment'] == 'success') {
+    echo '<div class="alert alert-success" role="alert">
+            Payment successful! Your order has been placed.
+          </div>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

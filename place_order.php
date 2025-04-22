@@ -37,6 +37,19 @@ if(isset($_REQUEST['btn_submit'])) {
 
 // For Razorpay payment handling
 if (isset($_REQUEST['razorpay_payment_id'])) {
+    // Create payment_details table if it doesn't exist
+    $create_table = "CREATE TABLE IF NOT EXISTS payment_details (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id VARCHAR(50) NOT NULL,
+        payment_id VARCHAR(100) NOT NULL,
+        payment_method VARCHAR(50) NOT NULL,
+        payment_date DATE NOT NULL
+    )";
+    
+    if (!mysqli_query($conn, $create_table)) {
+        die("Error creating payment_details table: " . mysqli_error($conn));
+    }
+
     $payment_id = $_REQUEST['razorpay_payment_id'];
     $nm = $_REQUEST['txt_nm'];
     $add = $_REQUEST['txt_add'];
@@ -53,39 +66,49 @@ if (isset($_REQUEST['razorpay_payment_id'])) {
     $date = date('Y-m-d');
     $status = 'ordered';
 
-    // Create the order with payment info
-    $insert = "insert into c_purchase values('','$c','$user','$nm','$add','$cno','$cnoa','$pin','$date','$status')";
-    if (!mysqli_query($conn, $insert)) {
-        die("Error creating order: " . mysqli_error($conn));
-    }
+    // Start transaction
+    mysqli_begin_transaction($conn);
 
-    // Store payment details
-    $payment_insert = "insert into payment_details values('','$c','$payment_id','razorpay','$date')";
-    if (!mysqli_query($conn, $payment_insert)) {
-        die("Error storing payment details: " . mysqli_error($conn));
-    }
+    try {
+        // Create the order with payment info
+        $insert = "insert into c_purchase values('','$c','$user','$nm','$add','$cno','$cnoa','$pin','$date','$status')";
+        if (!mysqli_query($conn, $insert)) {
+            throw new Exception("Error creating order: " . mysqli_error($conn));
+        }
 
-    // Update cart items to mark them as processed (fix the status variable)
-    $update = "update c_cart set cp_code = '$c', cc_status = 'ordered' 
-               where cc_username = '$user' AND cc_status = 'cart'";
-    if (!mysqli_query($conn, $update)) {
-        die("Error updating cart status: " . mysqli_error($conn));
-    }
+        // Store payment details
+        $payment_insert = "insert into payment_details (order_id, payment_id, payment_method, payment_date) 
+                          values('$c','$payment_id','razorpay','$date')";
+        if (!mysqli_query($conn, $payment_insert)) {
+            throw new Exception("Error storing payment details: " . mysqli_error($conn));
+        }
 
-    // Delete cart items with proper user check
-    $delete_cart = "delete from c_cart 
-                    where cc_username = '$user' 
-                    AND (cc_status = 'ordered' OR cc_status = 'cart')";
-    if (!mysqli_query($conn, $delete_cart)) {
-        die("Error clearing cart: " . mysqli_error($conn));
-    }
+        // Update cart items to mark them as processed
+        $update = "update c_cart set cp_code = '$c', cc_status = 'ordered' 
+                   where cc_username = '$user' AND cc_status = 'cart'";
+        if (!mysqli_query($conn, $update)) {
+            throw new Exception("Error updating cart status: " . mysqli_error($conn));
+        }
 
-    // Add debug logging
-    error_log("Cart cleared for user: $user");
-    
-    // Redirect to cart page
-    header("location:add_to_cart.php");
-    exit();
+        // Delete cart items
+        $delete_cart = "delete from c_cart 
+                        where cc_username = '$user' 
+                        AND cc_status = 'cart'";
+        if (!mysqli_query($conn, $delete_cart)) {
+            throw new Exception("Error clearing cart: " . mysqli_error($conn));
+        }
+
+        // Commit transaction
+        mysqli_commit($conn);
+        
+        // Redirect to cart page with success message
+        header("location:add_to_cart.php?payment=success");
+        exit();
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        mysqli_rollback($conn);
+        die("Transaction failed: " . $e->getMessage());
+    }
 }
 
 ?>
@@ -147,14 +170,30 @@ function initiateRazorpay() {
         "description": "Order Payment",
         "image": "your-logo.png",
         "handler": function(response) {
-            let form = document.getElementById('orderForm');
-            let input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "razorpay_payment_id";
-            input.value = response.razorpay_payment_id;
-            form.appendChild(input);
+            // Create a new form for submission
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'place_order.php';
 
-            form.action = "place_order.php";
+            // Add all the form fields
+            var fields = ['txt_nm', 'txt_add', 'txt_cno', 'txt_cnoa', 'txt_pin'];
+            fields.forEach(function(field) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field;
+                input.value = document.getElementsByName(field)[0].value;
+                form.appendChild(input);
+            });
+
+            // Add the payment ID
+            var paymentInput = document.createElement('input');
+            paymentInput.type = 'hidden';
+            paymentInput.name = 'razorpay_payment_id';
+            paymentInput.value = response.razorpay_payment_id;
+            form.appendChild(paymentInput);
+
+            // Submit the form
+            document.body.appendChild(form);
             form.submit();
         },
         "prefill": {
