@@ -1,167 +1,94 @@
 <?php 
-include("connection.php");
-//include("session_customer.php");
-$msg = "";
-$text = "";
+    // Start session at the very beginning
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
+    // Debug session
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
 
-if(isset($_REQUEST['btn_submit']))
-{
-$email = $_SESSION['forgot'];
-	$otp = $_SESSION['otp'];
-	$text = $_REQUEST['txtotp'];
-	
-	if($text == $otp)
-	{
-		header("location:forgetnewpass.php");	
-	}
-	else
-	{
-		$msg = "OTP Code Not Matched..!";
-	}
-}
-	
-	
+    include("connection.php");
+
+    // Debug information
+    error_log("Current session in forgetotp.php: " . print_r($_SESSION, true));
+
+    // Check if OTP was sent
+    if(!isset($_SESSION['email']) || !isset($_SESSION['otp'])) {
+        error_log("Missing session variables - redirecting to forgetpassword.php");
+        header("Location: forgetpassword.php");
+        exit();
+    }
+
+    $msg = "";
+
+    if(isset($_POST['btn_submit'])) {
+        $otp = $_POST['txtotp'];
+        
+        error_log("Submitted OTP: " . $otp);
+        error_log("Stored OTP: " . $_SESSION['otp']);
+        
+        if($otp == $_SESSION['otp']) {
+            $_SESSION['otp_verified'] = true;
+            error_log("OTP verified successfully");
+            header("Location: forgetnewpass.php");
+            exit();
+        } else {
+            error_log("Invalid OTP entered");
+            $msg = "Invalid OTP. Please try again.";
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<?php include("css.php"); ?>
-<script type="text/javascript">
-  function checkForm() 
-  {
-  	//alert("submit");
-	// Fetching values from all input fields and storing them in variables.
-	var email = document.getElementById("email1").value;
-	
-	
-	/*var password = document.getElementById("password1").value;
-	var email = document.getElementById("email1").value;
-	var website = document.getElementById("website1").value;*/
-	//Check input Fields Should not be blanks.
-	alert("Fill All Fields");
-	if (email == '') 
-	{
-		alert("Fill All Fields");
-		return false;//
-	} 
-	else 
-	{
-		//Notifying error fields
-		var email1 = document.getElementById("email");
-		
-		if (email1.innerHTML == 'Required'|| email1.innerHTML == 'Invalid Email') 
-		{
-			alert("Fill Valid Information");
-			return false;
-		} 
-		else 
-		{
-			//Submit Form When All values are valid.
-			document.getElementById("myForm").submit();
-		}
-	}
-}
-// AJAX code to check input field values when onblur event triggerd.
-function validation(field, query) 
-{
-	var xmlhttp;
-	if (window.XMLHttpRequest) 
-	{ 
-		// for IE7+, Firefox, Chrome, Opera, Safari
-		xmlhttp = new XMLHttpRequest();
-	} 
-	else 
-	{ 
-		// for IE6, IE5
-		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	
-	xmlhttp.onreadystatechange = function() 
-	{
-		if (xmlhttp.readyState != 4 && xmlhttp.status == 200) 
-		{
-			document.getElementById(field).innerHTML = "Validating..";
-		} 
-		else if (xmlhttp.readyState == 4 && xmlhttp.status == 200) 
-		{
-			document.getElementById(field).innerHTML = xmlhttp.responseText;
-		} 
-		else 
-		{
-			document.getElementById(field).innerHTML = "Error Occurred. <a href='index.php'>Reload Or Try Again</a> the page.";
-		}
-	}
-	xmlhttp.open("GET", "validation.php?field=" + field + "&query=" + query, false);
-	xmlhttp.send();
-}
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - Croma Shop</title>
+    <?php include("css.php"); ?>
 </head>
 <body>
-  <!--================ Start Header Menu Area =================-->
-<?php include("header.php"); ?>
-	<!--================ End Header Menu Area =================-->
+    <!-- Use minimal header without session checks -->
+    <?php  ?>
 
-  <main class="site-main">
-    
-    
-    <section class="section-margin calc-100px">
-      <div class="container">
-        <div class="alert alert-info" role="alert">OTP sent to your email id..</div>
-		<!-- <h3 class="text-center">OTP sent to your email id..</h3> -->
-        <h1 style="color:#00B074;text-align:center;">OTP</h1><br>
-        <center>
-							<form class="login-form" id="" name="myForm" method="post">
-						<div class="card mb-0">
-							<div class="card-body">
-								
-								<div class="text-center mb-3">
-									<i class="icon-people icon-2x text-warning border-warning border-3 rounded-pill p-3 mb-3 mt-1"></i>
-									
-								</div>
-		<div class="form-group">
-		<div class="col-lg-6">
-		<label for="exampleInputEmail1">OTP Code</label>
-		<input id="email1" class="form-control" style="width:200px" type="number" name="txtotp" placeholder="Enter OTP Code" value="<?php echo $text ?>" onKeyUp="validation('otp',this.value)" pattern="[0-9]" required>
-		</div>
-		<div id="otp" style="color:#FF0000;font-size:12px;margin-top:-15px;" class="col-lg-9"></div>
-</div>
-		<div class="form-group">
-		<div class="col-lg-6">
-		<br><p style="color:#FF3300;"><?php echo $msg ?></p>
-		</div>
-		</div>
-		
-		<div id="otp">
-		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="review_submit" type="submit" name="btn_submit"  class="btn btn-success" value="Submit" style="margin-top:10px;">Submit</button>
-		
-		
-		</div><br><br>
-					</div>
-						</div>
-					</form>
-		
-                    </center>
-      </div>
-    </section>
-    
+    <main class="site-main">
+        <section class="section-margin calc-100px">
+            <div class="container">
+                <div class="alert alert-info" role="alert">OTP sent to your email id..</div>
+                <h1 style="color:#00B074;text-align:center;">OTP Verification</h1><br>
+                <center>
+                    <form method="post" class="login-form">
+                        <div class="card mb-0" style="max-width: 400px;">
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <i class="icon-people icon-2x text-warning border-warning border-3 rounded-pill p-3 mb-3 mt-1"></i>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-6">
+                                        <label for="txtotp">OTP Code</label>
+                                        <input class="form-control" style="width:200px" type="number" name="txtotp" id="txtotp" placeholder="Enter OTP Code" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-6">
+                                        <br><p style="color:#FF3300;"><?php echo $msg ?></p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" name="btn_submit" class="btn btn-success" style="margin-top:10px;">Verify OTP</button>
+                                </div><br><br>
+                            </div>
+                        </div>
+                    </form>
+                </center>
+            </div>
+        </section>
+    </main>
 
-  </main>
+   
 
-
-  <!--================ Start footer Area  =================-->	
-	<?php include("footer.php"); ?>
-	<!--================ End footer Area  =================-->
-
-
-
-  <script src="vendors/jquery/jquery-3.2.1.min.js"></script>
-  <script src="vendors/bootstrap/bootstrap.bundle.min.js"></script>
-  <script src="vendors/skrollr.min.js"></script>
-  <script src="vendors/owl-carousel/owl.carousel.min.js"></script>
-  <script src="vendors/nice-select/jquery.nice-select.min.js"></script>
-  <script src="vendors/jquery.ajaxchimp.min.js"></script>
-  <script src="vendors/mail-script.js"></script>
-  <script src="js/main.js"></script>
+    <script src="vendors/jquery/jquery-3.2.1.min.js"></script>
+    <script src="vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

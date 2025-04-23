@@ -1,166 +1,99 @@
 <?php 
-include("connection.php");
-if(isset($_SESSION['forgot']))
-{
-	
-	$email = $_SESSION['forgot'];
-	//$cno = $_SESSION['contact'];
-	$otp = $_SESSION['otp'];
+session_start();
 
-}
-else
-{
-	header("location:login");
+// Check if OTP was verified
+if(!isset($_SESSION['email']) || !isset($_SESSION['otp_verified'])) {
+    header("Location: login.php");
+    exit();
 }
 
-if(isset($_REQUEST['btn_update']))
-{
-	$email = $_SESSION['forgot'];
-	
-	$pwd = $_REQUEST['txtpwd'];
-	
-	$update ="update customer_registration set password='$pwd' where email='$email'";
-	mysqli_query($conn,$update); 
-	
-	
-	unset($_SESSION['forgot']);
-	unset($_SESSION['contact']);
-	unset($_SESSION['otp']);
-	echo '<script>alert("Password change successfully")</script>';
-        echo "<script>window.location='login.php'</script>";
-	// header("location:index.php");
+$msg = "";
+
+if(isset($_POST['btn_submit'])) {
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+    
+    if(strlen($new_password) < 8) {
+        $msg = "Password must be at least 8 characters long";
+    } elseif($new_password !== $confirm_password) {
+        $msg = "Passwords do not match";
+    } else {
+        include("connection.php");
+        $email = $_SESSION['email'];
+        
+        $sql = "UPDATE customer_registration SET password = ? WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $new_password, $email);
+        
+        if($stmt->execute()) {
+            // Clear all session variables
+            session_unset();
+            session_destroy();
+            // Set success message in session
+            session_start();
+            $_SESSION['success'] = "Password updated successfully. Please login with your new password.";
+            header("Location: login.php");
+            exit();
+        } else {
+            $msg = "Error updating password";
+        }
+    }
 }
-	
-	
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<?php include("css.php"); ?>
-<script type="text/javascript">
-  function checkForm() 
-  {
-  	//alert("submit");
-	// Fetching values from all input fields and storing them in variables.
-	var email = document.getElementById("email1").value;
-	
-	
-	/*var password = document.getElementById("password1").value;
-	var email = document.getElementById("email1").value;
-	var website = document.getElementById("website1").value;*/
-	//Check input Fields Should not be blanks.
-	alert("Fill All Fields");
-	if (email == '') 
-	{
-		alert("Fill All Fields");
-		return false;//
-	} 
-	else 
-	{
-		//Notifying error fields
-		var email1 = document.getElementById("email");
-		
-		if (email1.innerHTML == 'Required'|| email1.innerHTML == 'Invalid Email') 
-		{
-			alert("Fill Valid Information");
-			return false;
-		} 
-		else 
-		{
-			//Submit Form When All values are valid.
-			document.getElementById("myForm").submit();
-		}
-	}
-}
-// AJAX code to check input field values when onblur event triggerd.
-function validation(field, query) 
-{
-	var xmlhttp;
-	if (window.XMLHttpRequest) 
-	{ 
-		// for IE7+, Firefox, Chrome, Opera, Safari
-		xmlhttp = new XMLHttpRequest();
-	} 
-	else 
-	{ 
-		// for IE6, IE5
-		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	
-	xmlhttp.onreadystatechange = function() 
-	{
-		if (xmlhttp.readyState != 4 && xmlhttp.status == 200) 
-		{
-			document.getElementById(field).innerHTML = "Validating..";
-		} 
-		else if (xmlhttp.readyState == 4 && xmlhttp.status == 200) 
-		{
-			document.getElementById(field).innerHTML = xmlhttp.responseText;
-		} 
-		else 
-		{
-			document.getElementById(field).innerHTML = "Error Occurred. <a href='index.php'>Reload Or Try Again</a> the page.";
-		}
-	}
-	xmlhttp.open("GET", "validation.php?field=" + field + "&query=" + query, false);
-	xmlhttp.send();
-}
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Croma Shop</title>
+    <?php include("css.php"); ?>
 </head>
 <body>
-  <!--================ Start Header Menu Area =================-->
-<?php include("header.php"); ?>
-	<!--================ End Header Menu Area =================-->
+    <!-- Use minimal header without session checks -->
+    
 
-  <main class="site-main">
-    
-    
     <section class="section-margin calc-100px">
-      <div class="container">
-        <h1 style="color:#00B074;text-align:center;">New Password</h1><br>
-        <center>
-		<form class="login-form"  name="myForm" method="post">
-						<div class="card mb-0">
-							<div class="card-body">
-
-	
-		<div class="form-group">
-		<div class="col-lg-6">
-		<!-- <label for="exampleInputEmail1">New Password</label> -->
-		<input id="email1" class="form-control" style="width:210px" type="password" name="txtpwd" placeholder="Enter New password"  pattern="[A-Za-z0-9@]{7,}" required>
-		</div>
-		<div id="pass" style="color:#FF0000;font-size:12px;margin-top:-15px;" class="col-lg-6"></div>
-		
-</div>
-			
-		
-		<div id="payment">
-		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="review_submit" type="submit" name="btn_update" class="btn btn-success" value="Submit">Submit</button>
-		</div>
-					</div>
-						</div>
-					</form>
-                    </center>
-      </div>
+        <div class="container">
+            <h1 style="color:#00B074;text-align:center;">Reset Password</h1><br>
+            <center>
+                <form method="post" class="login-form">
+                    <div class="card mb-0" style="max-width: 400px;">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="icon-people icon-2x text-warning border-warning border-3 rounded-pill p-3 mb-3 mt-1"></i>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-6">
+                                    <label for="new_password">New Password</label>
+                                    <input class="form-control" style="width:200px" type="password" name="new_password" placeholder="Enter new password" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-6">
+                                    <label for="confirm_password">Confirm Password</label>
+                                    <input class="form-control" style="width:200px" type="password" name="confirm_password" placeholder="Confirm new password" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-6">
+                                    <br><p style="color:#FF3300;"><?php echo $msg ?></p>
+                                </div>
+                            </div>
+                            <div>
+                                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" name="btn_submit" class="btn btn-success" value="Submit" style="margin-top:10px;">Reset Password</button>
+                            </div><br><br>
+                        </div>
+                    </div>
+                </form>
+            </center>
+        </div>
     </section>
-    
-
-  </main>
-
-
-  <!--================ Start footer Area  =================-->	
-	<?php include("footer.php"); ?>
-	<!--================ End footer Area  =================-->
 
 
 
-  <script src="vendors/jquery/jquery-3.2.1.min.js"></script>
-  <script src="vendors/bootstrap/bootstrap.bundle.min.js"></script>
-  <script src="vendors/skrollr.min.js"></script>
-  <script src="vendors/owl-carousel/owl.carousel.min.js"></script>
-  <script src="vendors/nice-select/jquery.nice-select.min.js"></script>
-  <script src="vendors/jquery.ajaxchimp.min.js"></script>
-  <script src="vendors/mail-script.js"></script>
-  <script src="js/main.js"></script>
+    <script src="vendors/jquery/jquery-3.2.1.min.js"></script>
+    <script src="vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
