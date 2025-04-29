@@ -1,6 +1,5 @@
 <?php  
-    $conn = mysqli_connect("localhost","root","","Croma") or die("connection failed");
-    // Enable error reporting for debugging
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+    $conn = mysqli_connect("localhost","root","","chroma") or die("connection failed");
+    session_start();
+    error_reporting(0);
 ?>

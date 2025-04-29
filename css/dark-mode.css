@@ -1,0 +1,122 @@
+/* Dark Mode Theme Variables */
+:root {
+  --primary-bg: #1a1a1a;
+  --secondary-bg: #2d2d2d;
+  --text-color: #e0e0e0;
+  --text-muted: #a0a0a0;
+  --border-color: #404040;
+  --hover-bg: #3a3a3a;
+  --card-bg: #2d2d2d;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --accent-color: #4a90e2;
+}
+
+/* Dark Mode Specific Styles */
+[data-theme="dark"] .header_area {
+  background-color: var(--primary-bg);
+  box-shadow: 0px 10px 27px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .navbar {
+  background-color: var(--primary-bg);
+}
+
+[data-theme="dark"] .nav-link {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .form-control {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .table {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .table thead th {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-content {
+  background-color: var(--primary-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--primary-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+  background-color: var(--hover-bg);
+}
+
+[data-theme="dark"] .alert {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Product Card Dark Mode Styles */
+.card-product {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.card-product:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px var(--shadow-color);
+  border-color: var(--accent-color);
+}
+
+.card-product__imgOverlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.card-product__imgOverlay li button {
+  background: var(--accent-color);
+  color: var(--text-color);
+}
+
+.card-product__imgOverlay li button:hover {
+  background: var(--hover-bg);
+}
+
+.card-product__title a {
+  color: var(--text-color);
+}
+
+.card-product__title a:hover {
+  color: var(--accent-color);
+}
+
+.card-product__price .current-price {
+  color: var(--text-color);
+}
+
+.card-product__price .old-price {
+  color: var(--text-muted);
+}
+
+.card-product__price .discount {
+  background: #ff4444;
+  color: var(--text-color);
+} 

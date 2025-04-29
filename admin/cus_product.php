@@ -1,6 +1,14 @@
 <?php 
 include("../connection.php");
 include("session_admin.php");
+if(isset($_REQUEST['o']))
+{
+$o=$_REQUEST['o'];
+$p=$_REQUEST['p'];
+$update="update c_cart set cc_status='ordered' where cc_id='$o'";
+mysqli_query($conn,$update);
+header("location:cus_product.php?p=$p");
+}
 if(isset($_REQUEST['c']))
 {
 $c=$_REQUEST['c'];
@@ -8,7 +16,6 @@ $p=$_REQUEST['p'];
 $update="update c_cart set cc_status='process' where cc_id='$c'";
 mysqli_query($conn,$update);
 header("location:cus_product.php?p=$p");
-
 }
 if(isset($_REQUEST['d']))
 {
@@ -17,7 +24,6 @@ $p=$_REQUEST['p'];
 $update="update c_cart set cc_status='dispatched' where cc_id='$d'";
 mysqli_query($conn,$update);
 header("location:cus_product.php?p=$p");
-
 }
 if(isset($_REQUEST['e']))
 {
@@ -127,32 +133,42 @@ header("location:cus_product.php?p=$p");
 		   <td><?php echo $row['cc_price']; ?> Rs.</td>
 		   <td>
 		   
-		   <?php if($row['cc_status']=='ordered')
+		   <?php 
+		   if(empty($row['cc_status']))
 		   {
 		   ?>
-		    <a class="btn btn-info" href="cus_product.php?c=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>" onClick="return confirm('Are you sure Process this order?')"><?php echo $row['cc_status']; ?></b></a>
+		    <a class="btn btn-info" href="cus_product.php?o=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>" onClick="return confirm('Are you sure to mark this as Ordered?')">Mark as Ordered</a>
+		   <?php
+		   }
+		   else if($row['cc_status']=='ordered')
+		   {
+		   ?>
+		    <a class="btn btn-info" href="cus_product.php?c=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>" onClick="return confirm('Are you sure Process this order?')"><?php echo $row['cc_status']; ?></a>
 		   
 		   <?php
 		   }
 		   else if($row['cc_status']=='process')
 		   {
 		   ?>
-		    <a class="btn btn-primary" href="cus_product.php?d=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>" onClick="return confirm('Are you sure Dispatch this order?')"><?php echo $row['cc_status']; ?></b></a>
+		    <a class="btn btn-primary" href="cus_product.php?d=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>" onClick="return confirm('Are you sure Dispatch this order?')"><?php echo $row['cc_status']; ?></a>
 		  
 		   <?php
-		   }elseif($row['cc_status']=='dispatched')
+		   }
+		   elseif($row['cc_status']=='dispatched')
 		   {
 		   ?>
 		  <a class="btn btn-warning" href="cus_product.php?e=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>" onClick="return confirm('Are you sure Delivered this order?')"><?php echo $row['cc_status']; ?></b></a>
 		   <?php
-		   }elseif($row['cc_status']=='delivered')
+		   }
+		   elseif($row['cc_status']=='delivered')
 		   {
 		   ?>
 		   <b class="btn btn-success"><?php echo $row['cc_status']; ?></b>
 		   
 		   
 		   <?php
-		   }elseif($row['cc_status']=='cancel')
+		   }
+		   elseif($row['cc_status']=='cancel')
 		   {
 		   ?>
 		   <b class="btn btn-secondary"><?php echo $row['cc_status']; ?></b>
@@ -172,7 +188,8 @@ header("location:cus_product.php?p=$p");
 		  ?>
 		   
 		   <?php
-		   }elseif($row['cc_status']=='return')
+		   }
+		   elseif($row['cc_status']=='return')
 		   {
 		   ?>
 		   <b class="btn btn-primary"><?php echo $row['cc_status']; ?></b>
@@ -194,7 +211,7 @@ header("location:cus_product.php?p=$p");
 		   }
 		   ?>
 		   </td>
-		   <td><a class="btn btn-warning" href="tracking.php?t=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>&tr=<?php echo $row['pname']; ?>">Tracking</a></td>
+		   <td><a class="btn btn-warning" href="tracking.php?t=<?php echo $row['cc_id']; ?>&p=<?php echo $row['cp_code']; ?>">Track Order</a></td>
 		  
 		   </tr>
 		   <?php

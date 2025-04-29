@@ -6,13 +6,59 @@ include("session_customer.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<?php include("css.php"); ?>
+	<head>
+		<?php include("css.php"); ?>
+		<?php include("customer_header.php"); ?>
+
+<style>
+/* Dark mode text colors */
+[data-theme="dark"] .section-intro h2,
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td,
+[data-theme="dark"] .btn-info {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #2d2d2d;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(even) {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+    border-color: #404040;
+}
+
+[data-theme="dark"] .section-margin {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .container {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+[data-theme="dark"] .btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+</style>
 
 </head>
 <body>
   <!--================ Start Header Menu Area =================-->
-<?php include("customer_header.php"); ?>
 	<!--================ End Header Menu Area =================-->
 
   <main class="site-main">

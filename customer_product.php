@@ -1,8 +1,7 @@
 <?php
-include('connection.php'); // Ensure the database connection is included
-
 $indexClicked = isset($_GET['psp_id']);
 $headerClicked = isset($_REQUEST['subid']) && !$indexClicked;
+$categoryClicked = isset($_REQUEST['cid']) && !$indexClicked && !$headerClicked;
 ?>
 <?php
 include("connection.php");
@@ -14,6 +13,78 @@ include("session_customer.php");
 
 <head>
   <?php include("css.php"); ?>
+  <style>
+    :root {
+      --primary-bg: #ffffff;
+      --secondary-bg: #f8f9fa;
+      --text-color: #222;
+      --card-bg: #fff;
+      --card-title: #222;
+      --card-subtitle: #666;
+      --border-color: #dee2e6;
+      --btn-outline: #007bff;
+      --btn-outline-hover: #0056b3;
+    }
+    [data-theme="dark"] {
+      --primary-bg: #181818;
+      --secondary-bg: #232323;
+      --text-color: #f1f1f1;
+      --card-bg: #232323;
+      --card-title: #f1f1f1;
+      --card-subtitle: #b0b0b0;
+      --border-color: #444;
+      --btn-outline: #4fd8ff;
+      --btn-outline-hover: #00bfff;
+    }
+    body {
+      background: var(--primary-bg);
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s;
+    }
+    .section-intro h2, h2, label {
+      color: var(--text-color) !important;
+    }
+    .product-card {
+      background: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s, color 0.3s;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .product-img {
+      transition: transform 0.3s ease;
+      height: 250px;
+      object-fit: cover;
+    }
+    .product-card:hover .product-img {
+      transform: scale(1.05);
+    }
+    .card-title, .fw-bold {
+      color: var(--card-title) !important;
+    }
+    .card-subtitle, .text-muted {
+      color: var(--card-subtitle) !important;
+    }
+    .btn-outline-primary {
+      color: var(--btn-outline) !important;
+      border-color: var(--btn-outline) !important;
+      background: transparent;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .btn-outline-primary:hover {
+      color: #fff !important;
+      background: var(--btn-outline-hover) !important;
+      border-color: var(--btn-outline-hover) !important;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
 
 <body>
@@ -93,34 +164,15 @@ include("session_customer.php");
           <?php if ($res && mysqli_num_rows($res) > 0) {
             while ($rows = mysqli_fetch_array($res)) {
           ?>
-              <div class="col-md-6 col-lg-4 col-xl-3 mx-8">
-                <div class="card text-center card-product">
-                  <div class="card-product__img w-100 h-100">
-                    <img class="card-img" style="background: darkgray;" src="admin/Product_Upload/<?php echo $rows['product_image']; ?>" alt="">
-                    <ul class="card-product__imgOverlay">
-                      <li>
-                        <button>
-                          <a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>">
-                            <i class="ti-shopping-cart"></i>
-                          </a>
-                        </button>
-                      </li>
-                    </ul>
+              <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card border-0 shadow-sm h-100 product-card">
+                  <div class="position-relative overflow-hidden" style="background-color: darkgray;">
+                    <img src="admin/Product_Upload/<?php echo $row['product_image']; ?>" class="card-img-top img-fluid product-img" alt="<?php echo $row['pcolor']; ?>">
                   </div>
-                  <div class="card-body">
-                    <h4 class="card-product__title">
-                      <a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>">
-                        <?php echo htmlspecialchars($rows['pcolor']); ?>
-                      </a>
-                    </h4>
-                    <p class="card-product__price">
-                      ₹<?php
-                       
-                        $sprice = $rows['pro_sale_price'];
-                        echo $sprice + $gstpi;
-                        ?>
-                    </p>
-                    <a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>" class="btn btn-primary">View</a>
+                  <div class="card-body text-center">
+                    <h6 class="card-subtitle text-muted mb-1"><?php echo $row['pcolor']; ?></h6>
+                    <h5 class="card-title fw-bold mb-2">₹<?php echo $row['pro_sale_price']; ?></h5>
+                    <a href="customersingle_product.php?psp_id=<?php echo $row['psp_id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill">View Product</a>
                   </div>
                 </div>
               </div>
@@ -135,9 +187,47 @@ include("session_customer.php");
     </section>
     <?php }?>
 
+    <!-- Category products section -->
+    <?php if ($categoryClicked) { 
+        $categoryid = $_REQUEST['cid'];
+        $select = "SELECT subcategory.*,   
+       product_entry.product_image, 
+       product_entry.pname, 
+       product_size_price.pro_sale_price,
+       product_size_price.psp_id,
+       product_size_price.pcolor
+    FROM subcategory
+    LEFT JOIN product_entry ON subcategory.subcategory_id = product_entry.p_subid
+    LEFT JOIN product_size_price ON product_entry.pe_code = product_size_price.pe_code
+    WHERE subcategory.cid = '$categoryid'";
+        $res = mysqli_query($conn, $select);
+    ?>
+    <section class="section-margin calc-60px">
+      <div class="container">
+        <div class="section-intro pb-60px">
+          <h2>Subcategories</h2>
+        </div>
+        <div class="row">
+          <?php while ($row = mysqli_fetch_array($res)) { ?>
+            <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+              <div class="card border-0 shadow-sm h-100 product-card">
+                <div class="position-relative overflow-hidden" style="background-color: darkgray;">
+                  <img src="admin/Product_Upload/<?php echo $row['product_image']; ?>" class="card-img-top img-fluid product-img" alt="<?php echo $row['subcategory_name']; ?>">
+                </div>
+                <div class="card-body text-center">
+                  <h6 class="card-subtitle text-muted mb-1"><?php echo $row['pcolor']; ?></h6>
+                <h5 class="card-title fw-bold mb-2">₹<?php echo $row['pro_sale_price']; ?></h5>
+                <a href="customersingle_product.php?psp_id=<?php echo $row['psp_id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill">View Product</a>
+                  </div>
+              </div>
+            </div>
+          <?php } ?>
+        </div>
+      </div>
+    </section>
+    <?php } ?>
 
-    <!-- // header section product -->
-     
+    <!-- header section product -->
     <?php if ($headerClicked) { 
     $subcategoryid = $_REQUEST['subid'];
     $select = "SELECT * FROM product_entry 
@@ -146,294 +236,34 @@ include("session_customer.php");
     $res = mysqli_query($conn, $select);
 ?>
     
-    <section class="section-margin calc-100px">
+    <section class="section-margin calc-60px">
       <div class="container">
-        <div class="section-intro pb-100px">
-          <h2>Products</h2>
+        <div class="section-intro pb-60px">
+          <h2>Productss</h2>
         </div>
         <div class="row">
-          <?php while ($rows = mysqli_fetch_array($res)) {
+          <?php while ($row = mysqli_fetch_array($res)) {
             // print_r($rows);die;
+            
           ?>
-            <div class="col-md-12 col-lg-4 col-xl-3 mx-8">
-              <div class="card text-center card-product">
-                <div class="card-product__img w-100 h-100">
-                  <img class="card-img" style="background: darkgray;" src="admin/Product_Upload/<?php echo $rows['product_image']; ?>" alt="">
-                  <ul class="card-product__imgOverlay">
-                    <li><button><a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>"><i class="ti-shopping-cart"></i></a></button></li>
-                  </ul>
-                </div>
-                <div class="card-body">
-                  <p></p>
-                  <h4 class="card-product__title"><a href="customersingle_product.php?p_id=<?php echo $rows['p_id']; ?>"><?php echo $rows['pcolor']; ?></a></h4>
-                  <p class="card-product__price">₹<?php
-                                                  
-                                                  $sprice = $rows['pro_sale_price'];
-                                                  
-                                                  echo $total = $sprice + $gstpi; //echo $rows['pro_sale_price'];  
-                                                  ?></p>
-                  <a href="customersingle_product.php?psp_id=<?php echo $rows['psp_id']; ?>" class="btn btn-primary">View</a>
-                  </form>
+           <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card border-0 shadow-sm h-100 product-card">
+                  <div class="position-relative overflow-hidden" style="background-color: darkgray;">
+                    <img src="admin/Product_Upload/<?php echo $row['product_image']; ?>" class="card-img-top img-fluid product-img" alt="<?php echo $row['pcolor']; ?>">
+                  </div>
+                  <div class="card-body text-center">
+                    <h6 class="card-subtitle text-muted mb-1"><?php echo $row['pcolor']; ?></h6>
+                    <h5 class="card-title fw-bold mb-2">₹<?php echo $row['pro_sale_price']; ?></h5>
+                    <a href="customersingle_product.php?psp_id=<?php echo $row['psp_id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill">View Product</a>
+                  </div>
                 </div>
               </div>
-            </div>
           <?php } ?>
-
         </div>
       </div>
     </section>
     <?php }?>
-    <!-- ================ trending product section end ================= -->
-
-
-    <!-- ================ offer section start ================= -->
-    <!-- <section class="offer" id="parallax-1" data-anchor-target="#parallax-1" data-300-top="background-position: 20px 30px" data-top-bottom="background-position: 0 20px">
-      <div class="container">
-        <div class="row">
-          <div class="col-xl-5">
-            <div class="offer__content text-center">
-              <h3>Up To 50% Off</h3>
-              <h4>Winter Sale</h4>
-              <p>Him she'd let them sixth saw light</p>
-              <a class="button button--active mt-3 mt-xl-4" href="#">Shop Now</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-    <!-- ================ offer section end ================= -->
-
-    <!-- ================ Best Selling item  carousel ================= -->
-    <!-- <section class="section-margin calc-60px">
-      <div class="container">
-        <div class="section-intro pb-60px">
-          <p>Popular Item in the market</p>
-          <h2>Best <span class="section-intro__style">Sellers</span></h2>
-        </div>
-        <div class="owl-carousel owl-theme" id="bestSellerCarousel">
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product1.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Accessories</p>
-              <h4 class="card-product__title"><a href="single-product.html">Quartz Belt Watch</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product2.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Beauty</p>
-              <h4 class="card-product__title"><a href="single-product.html">Women Freshwash</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product3.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Decor</p>
-              <h4 class="card-product__title"><a href="single-product.html">Room Flash Light</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product4.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Decor</p>
-              <h4 class="card-product__title"><a href="single-product.html">Room Flash Light</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product1.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Accessories</p>
-              <h4 class="card-product__title"><a href="single-product.html">Quartz Belt Watch</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product2.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Beauty</p>
-              <h4 class="card-product__title"><a href="single-product.html">Women Freshwash</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product3.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Decor</p>
-              <h4 class="card-product__title"><a href="single-product.html">Room Flash Light</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-
-          <div class="card text-center card-product">
-            <div class="card-product__img">
-              <img class="img-fluid" src="img/product/product4.png" alt="">
-              <ul class="card-product__imgOverlay">
-                <li><button><i class="ti-search"></i></button></li>
-                <li><button><i class="ti-shopping-cart"></i></button></li>
-                <li><button><i class="ti-heart"></i></button></li>
-              </ul>
-            </div>
-            <div class="card-body">
-              <p>Decor</p>
-              <h4 class="card-product__title"><a href="single-product.html">Room Flash Light</a></h4>
-              <p class="card-product__price">$150.00</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-    <!-- ================ Best Selling item  carousel end ================= -->
-
-    <!-- ================ Blog section start ================= -->
-    <!-- <section class="blog">
-      <div class="container">
-        <div class="section-intro pb-60px">
-          <p>Popular Item in the market</p>
-          <h2>Latest <span class="section-intro__style">News</span></h2>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-            <div class="card card-blog">
-              <div class="card-blog__img">
-                <img class="card-img rounded-0" src="img/blog/blog1.png" alt="">
-              </div>
-              <div class="card-body">
-                <ul class="card-blog__info">
-                  <li><a href="#">By Admin</a></li>
-                  <li><a href="#"><i class="ti-comments-smiley"></i> 2 Comments</a></li>
-                </ul>
-                <h4 class="card-blog__title"><a href="single-blog.html">The Richland Center Shooping News and weekly shooper</a></h4>
-                <p>Let one fifth i bring fly to divided face for bearing divide unto seed. Winged divided light Forth.</p>
-                <a class="card-blog__link" href="#">Read More <i class="ti-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-            <div class="card card-blog">
-              <div class="card-blog__img">
-                <img class="card-img rounded-0" src="img/blog/blog2.png" alt="">
-              </div>
-              <div class="card-body">
-                <ul class="card-blog__info">
-                  <li><a href="#">By Admin</a></li>
-                  <li><a href="#"><i class="ti-comments-smiley"></i> 2 Comments</a></li>
-                </ul>
-                <h4 class="card-blog__title"><a href="single-blog.html">The Shopping News also offers top-quality printing services</a></h4>
-                <p>Let one fifth i bring fly to divided face for bearing divide unto seed. Winged divided light Forth.</p>
-                <a class="card-blog__link" href="#">Read More <i class="ti-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-            <div class="card card-blog">
-              <div class="card-blog__img">
-                <img class="card-img rounded-0" src="img/blog/blog3.png" alt="">
-              </div>
-              <div class="card-body">
-                <ul class="card-blog__info">
-                  <li><a href="#">By Admin</a></li>
-                  <li><a href="#"><i class="ti-comments-smiley"></i> 2 Comments</a></li>
-                </ul>
-                <h4 class="card-blog__title"><a href="single-blog.html">Professional design staff and efficient equipment you’ll find we offer</a></h4>
-                <p>Let one fifth i bring fly to divided face for bearing divide unto seed. Winged divided light Forth.</p>
-                <a class="card-blog__link" href="#">Read More <i class="ti-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-    <!-- ================ Blog section end ================= -->
-
-    <!-- ================ Subscribe section start ================= -->
-    <!-- <section class="subscribe-position">
-      <div class="container">
-        <div class="subscribe text-center">
-          <h3 class="subscribe__title">Get Update From Anywhere</h3>
-          <p>Bearing Void gathering light light his eavening unto dont afraid</p>
-          <div id="mc_embed_signup">
-            <form target="_blank" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01" method="get" class="subscribe-form form-inline mt-5 pt-1">
-              <div class="form-group ml-sm-auto">
-                <input class="form-control mb-1" type="email" name="EMAIL" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Your Email Address '" >
-                <div class="info"></div>
-              </div>
-              <button class="button button-subscribe mr-auto mb-1" type="submit">Subscribe Now</button>
-              <div style="position: absolute; left: -5000px;">
-                <input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value="" type="text">
-              </div>
-
-            </form>
-          </div>
-          
-        </div>
-      </div>
-    </section> -->
-    <!-- ================ Subscribe section end ================= -->
-
-
-
+   
   </main>
 
 
@@ -451,6 +281,27 @@ include("session_customer.php");
   <script src="vendors/jquery.ajaxchimp.min.js"></script>
   <script src="vendors/mail-script.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#categoryDropdown").change(function() {
+        var catid = $(this).val(); // Get selected category ID
+
+        if (catid) {
+          $.ajax({
+            url: "fetch_subcategories.php",
+            type: "POST",
+            data: {
+              category_id: catid
+            },
+            success: function(data) {
+              $(".trending-products").html(data); // Display products in trending section
+            }
+          });
+        }
+      });
+    });
+  </script>
+  
 </body>
 
 </html>

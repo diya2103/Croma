@@ -34,7 +34,6 @@
 </head>
 <body>
   <!--================ Start Header Menu Area =================-->
-<?php include("header.php"); ?>
 	<!--================ End Header Menu Area =================-->
       <!-- ================ start banner area ================= -->	
 	
@@ -96,7 +95,6 @@
 
 
   <!--================ Start footer Area  =================-->	
-	<?php include("footer.php"); ?>
 	<!--================ End footer Area  =================-->
 
 

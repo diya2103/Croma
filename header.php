@@ -29,10 +29,15 @@ include("session_customer.php");
   box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Optional shadow effect */
 }
 
+    html {
+        scroll-behavior: smooth;
+    }
+
+
 </style>
 <header class="header_area" >
 
-    <nav class="navbar navbar-expand-lg navbar-light" style="height: 83.8px;">
+    <nav class="navbar navbar-expand-lg navbar-light" style="height: 60px;">
 
         <a class="navbar-brand logo_h" href="index.php"><img src="img/croma.png" style="width:150px; margin-left: 100px;"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -45,7 +50,8 @@ include("session_customer.php");
         <ul class="nav navbar-nav menu_nav ml-auto mr-auto" style="padding-right: 281px; margin-right: 58.6px;">
             <li class="nav-item active"><a href="index.php" class="hyper nav-link"><span>Home</span></a></li>
             <li class="nav-item submenu dropdown">
-                <a href="#" class="dropdown-toggle nav-link hyper menu-hover">
+            <a href="index.php?category_id=<?php echo $catid; ?>#product-section" class="nav-link ">
+           
                     <span>Menu <b class="caret"></b></span>
                 </a>
                 <ul class="dropdown-menu multi category-menu">

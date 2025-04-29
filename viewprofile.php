@@ -12,6 +12,80 @@ include("session_customer.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <?php include("customer_header.php"); ?>
+    <style>
+    /* Dark mode styles */
+    [data-theme="dark"] .gradient-custom-2 {
+        background-color: #1a1a1a;
+    }
+
+    [data-theme="dark"] .card {
+        background-color: #2d2d2d;
+        border-color: #404040;
+    }
+
+    [data-theme="dark"] .rounded-top {
+        background-color: #000 !important;
+    }
+
+    [data-theme="dark"] h5,
+    [data-theme="dark"] p,
+    [data-theme="dark"] .lead,
+    [data-theme="dark"] .text-black,
+    [data-theme="dark"] .text-black a,
+    [data-theme="dark"] .text-black b,
+    [data-theme="dark"] .text-black div {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .text-muted {
+        color: #b0b0b0 !important;
+    }
+
+    [data-theme="dark"] .btn-outline-dark {
+        color: #ffffff !important;
+        border-color: #ffffff !important;
+        background-color: transparent !important;
+    }
+
+    [data-theme="dark"] .btn-outline-dark:hover {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    [data-theme="dark"] .p-4[style*="background-color: #f8f9fa"] {
+        background-color: #2d2d2d !important;
+    }
+
+    [data-theme="dark"] .img-thumbnail {
+        border-color: #404040;
+        background-color: #2d2d2d;
+    }
+
+    [data-theme="dark"] .container {
+        background-color: #1a1a1a;
+    }
+
+    [data-theme="dark"] .site-main {
+        background-color: #1a1a1a;
+    }
+
+    [data-theme="dark"] .d-flex.flex-row {
+        background-color: #000 !important;
+    }
+
+    [data-theme="dark"] .card-body {
+        background-color: #2d2d2d;
+    }
+
+    [data-theme="dark"] .row {
+        border-bottom: 1px solid #404040;
+    }
+
+    [data-theme="dark"] .row:last-child {
+        border-bottom: none;
+    }
+    </style>
 </head>
 <body>
   <!--================ Start Header Menu Area =================-->

@@ -17,18 +17,61 @@ header("location:wishlist.php");
 <html lang="en">
 <head>
 <?php include("css.php"); ?>
+<style>
+/* Dark mode text colors */
+[data-theme="dark"] .section-intro h2,
+[data-theme="dark"] .t-head,
+[data-theme="dark"] .t-data,
+[data-theme="dark"] .t-data a,
+[data-theme="dark"] h3,
+[data-theme="dark"] .btn-success {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th {
+    border-color: #404040;
+}
+
+[data-theme="dark"] .section-margin {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .container {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+[data-theme="dark"] .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+[data-theme="dark"] .t-data a[style*="color:blue"] {
+    color: #4dabf7 !important;
+}
+</style>
 </head>
 <body>
-  <!--================ Start Header Menu Area =================-->
-<?php include("customer_header.php"); ?>
+	<!--================ Start Header Menu Area =================-->
+	<?php include("customer_header.php"); ?>
 	<!--================ End Header Menu Area =================-->
-
-  <main class="site-main">
-    
-    
-    <section class="section-margin calc-100px">
-      <div class="container">
-        <div class="section-intro pb-100px">
+	
+	<main class="site-main">
+		
+		
+		<section class="section-margin calc-100px">
+			<div class="container">
+				<div class="section-intro pb-100px">
           <center><h2>Wishlist</h2></center>
         </div>
         <div class="row">

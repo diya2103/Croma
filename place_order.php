@@ -208,6 +208,95 @@ function initiateRazorpay() {
     rzp.open();
 }
 </script>
+
+<style>
+/* Dark mode styles */
+[data-theme="dark"] .section-margin {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .container {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .section-intro h2 {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .form-control {
+    background-color: #2d2d2d;
+    border-color: #404040;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .form-control:focus {
+    background-color: #2d2d2d;
+    border-color: #4dabf7;
+    color: #ffffff;
+    box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25);
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: #b0b0b0;
+}
+
+[data-theme="dark"] select.form-control {
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+[data-theme="dark"] select.form-control option {
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .key {
+    color: #ffffff;
+}
+
+[data-theme="dark"] #pincode {
+    color: #ffffff;
+}
+
+[data-theme="dark"] #payment {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .site-main {
+    background-color: #1a1a1a;
+}
+
+/* Razorpay button styling in dark mode */
+[data-theme="dark"] .razorpay-payment-button {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border: 1px solid #404040;
+}
+
+[data-theme="dark"] .razorpay-payment-button:hover {
+    background-color: #404040;
+    color: #ffffff;
+}
+
+/* Validation message styling */
+[data-theme="dark"] #pincode div,
+[data-theme="dark"] #payment div {
+    color: #ffffff;
+}
+
+/* Form labels and text */
+[data-theme="dark"] label,
+[data-theme="dark"] .form-text {
+    color: #ffffff;
+}
+
+/* Disabled select styling */
+[data-theme="dark"] select.form-control:disabled {
+    background-color: #1a1a1a;
+    color: #666666;
+    border-color: #404040;
+}
+</style>
 </head>
 <body>
   <!--================ Start Header Menu Area =================-->

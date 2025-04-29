@@ -1,4 +1,3 @@
-
 <?php 
 include("connection.php");
 include("session_customer.php");
@@ -107,6 +106,61 @@ $insert = "insert into c_cart value('','$code','','$email','$psp_id','$qty','$pr
 .checked {
   color: orange;
 }
+
+/* Fix for scrolling */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.header_area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: #fff;
+}
+
+.site-main {
+  margin-top: 70px; /* Height of the header */
+  padding: 20px;
+  min-height: calc(100vh - 70px);
+}
+
+/* Dark mode text colors */
+[data-theme="dark"] .s_product_text h2,
+[data-theme="dark"] .s_product_text h3,
+[data-theme="dark"] .s_product_text p,
+[data-theme="dark"] .item_name,
+[data-theme="dark"] .list,
+[data-theme="dark"] .single-rating,
+[data-theme="dark"] .product_count label {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .gray-star {
+  color: #666 !important;
+}
+
+[data-theme="dark"] .header_area {
+  background: #1a1a1a;
+  border-bottom: 1px solid #404040;
+}
+
+[data-theme="dark"] .site-main {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .product_image_area {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .container {
+  background: #1a1a1a;
+}
 </style>
 <script>
 function magnify(imgID, zoom) {
@@ -206,7 +260,7 @@ function magnify(imgID, zoom) {
 									echo $total = $sprice + $gstpi; //echo $rows['pro_sale_price'];  ?></h2>
 						<ul class="list">
 							<div class="col-md-12 single-top-right">
-						<h3 class="item_name"> <?php echo $row['pe_name'] ?></h3>
+						<h3 class="item_name"> <?php echo $row['pname'] ?></h3>
 						<p>Processing Time: Item will be shipped out within 3-4 working days.<br>
 						CGST & SGST Included.<br><br>
 						10 Days Return Policy</p>

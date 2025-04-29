@@ -2,7 +2,13 @@
 include("../connection.php");
 include("session_admin.php");
 
-   
+// Get all parameters
+$cart_id = isset($_GET['t']) ? $_GET['t'] : '';
+$purchase_code = isset($_GET['p']) ? $_GET['p'] : '';
+
+// Redirect to product_tracking.php with the same parameters
+header("Location: product_tracking.php?t=" . $cart_id . "&p=" . $purchase_code);
+exit;
 ?>
 
 <!DOCTYPE html>

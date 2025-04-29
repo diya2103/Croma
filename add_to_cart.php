@@ -29,8 +29,162 @@ if (isset($_GET['payment']) && $_GET['payment'] == 'success') {
 <head>
 	<?php include("css.php"); ?>
 	<style>
-		#specifyColor {
-			accent-color: red;
+		:root {
+			--primary-bg: #ffffff;
+			--secondary-bg: #f8f9fa;
+			--text-color: #222;
+			--table-header-bg: #f1f1f1;
+			--table-row-bg: #fff;
+			--table-border: #dee2e6;
+		}
+		[data-theme="dark"] {
+			--primary-bg: #181818;
+			--secondary-bg: #232323;
+			--text-color: #f1f1f1;
+			--table-header-bg: #232323;
+			--table-row-bg: #181818;
+			--table-border: #444;
+		}
+		body {
+			background: var(--primary-bg);
+			color: var(--text-color);
+			transition: background 0.3s, color 0.3s;
+		}
+		.section-intro h2, h2, th, td, label {
+			color: var(--text-color) !important;
+		}
+		.table {
+			background: var(--secondary-bg);
+			color: var(--text-color);
+			border-color: var(--table-border);
+		}
+		.table th {
+			background: var(--table-header-bg);
+			color: var(--text-color);
+			border-color: var(--table-border);
+		}
+		.table-striped > tbody > tr:nth-of-type(odd) {
+			background: var(--table-row-bg);
+		}
+		.table-striped > tbody > tr:nth-of-type(even) {
+			background: var(--secondary-bg);
+		}
+		.table td, .table th {
+			border-color: var(--table-border);
+		}
+		.btn-danger, .btn-success, .btn-info {
+			color: #fff !important;
+		}
+		/* Dark mode styles */
+		[data-theme="dark"] .section-margin {
+			background-color: #1a1a1a;
+		}
+
+		[data-theme="dark"] .container {
+			background-color: #1a1a1a;
+		}
+
+		[data-theme="dark"] .section-intro h2 {
+			color: #ffffff;
+		}
+
+		[data-theme="dark"] .table {
+			background-color: #2d2d2d;
+			color: #ffffff;
+			border-color: #404040;
+		}
+
+		[data-theme="dark"] .table th {
+			background-color: #2d2d2d;
+			color: #ffffff;
+			border-color: #404040;
+		}
+
+		[data-theme="dark"] .table td {
+			background-color: #2d2d2d;
+			color: #ffffff;
+			border-color: #404040;
+		}
+
+		[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+			background-color: #2d2d2d;
+		}
+
+		[data-theme="dark"] .table-striped tbody tr:nth-of-type(even) {
+			background-color: #232323;
+		}
+
+		[data-theme="dark"] .t-head {
+			color: #ffffff !important;
+		}
+
+		[data-theme="dark"] .t-data {
+			color: #ffffff !important;
+		}
+
+		[data-theme="dark"] .t-data a {
+			color: #ffffff !important;
+		}
+
+		[data-theme="dark"] .form-control {
+			background-color: #2d2d2d;
+			border-color: #404040;
+			color: #ffffff;
+		}
+
+		[data-theme="dark"] .form-control:focus {
+			background-color: #2d2d2d;
+			border-color: #4dabf7;
+			color: #ffffff;
+			box-shadow: 0 0 0 0.2rem rgba(77, 171, 247, 0.25);
+		}
+
+		[data-theme="dark"] .btn-danger {
+			background-color: #dc3545;
+			border-color: #dc3545;
+			color: #ffffff !important;
+		}
+
+		[data-theme="dark"] .btn-success {
+			background-color: #28a745;
+			border-color: #28a745;
+			color: #ffffff !important;
+		}
+
+		[data-theme="dark"] .btn-danger:hover,
+		[data-theme="dark"] .btn-success:hover {
+			opacity: 0.9;
+		}
+
+		[data-theme="dark"] .img-responsive {
+			border: 1px solid #404040;
+		}
+
+		[data-theme="dark"] b {
+			color: #ffffff !important;
+		}
+
+		[data-theme="dark"] u {
+			color: #ffffff !important;
+		}
+
+		[data-theme="dark"] .site-main {
+			background-color: #1a1a1a;
+		}
+
+		[data-theme="dark"] h3 {
+			color: #ffffff;
+		}
+
+		[data-theme="dark"] .alert-success {
+			background-color: #28a745;
+			border-color: #28a745;
+			color: #ffffff;
+		}
+
+		[data-theme="dark"] .alert-success a {
+			color: #ffffff;
+			text-decoration: underline;
 		}
 	</style>
 	<script>
@@ -232,7 +386,7 @@ if (isset($_GET['payment']) && $_GET['payment'] == 'success') {
 		?>
 			<center>
 				<h3>Your Cart is Empty..!</h3>
-				<a href="customer_index.php" class="btn btn-success btn-lg">Continue Shopping...</a>
+				<a href="index.php" class="btn btn-success btn-lg">Continue Shopping...</a>
 			</center>
 		<?php
 					}

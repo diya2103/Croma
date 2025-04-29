@@ -1,8 +1,3 @@
-<?php
-session_start();
-include("connection.php");
-include("session_customer.php");
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +5,45 @@ include("session_customer.php");
   <style>
     .carousel-item {
       background-color: #000;
-      /* or darkgrey or match your image background */
+      height: 500px;
+      position: relative;
+    }
+
+    .carousel-item img {
+      object-fit: cover;
+      height: 100%;
+      width: 100%;
+    }
+
+    .carousel-caption {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      bottom: 20%;
+      left: 10%;
+      right: 10%;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 5%;
+      opacity: 0.8;
+    }
+
+    .carousel-control-prev:hover,
+    .carousel-control-next:hover {
+      opacity: 1;
+    }
+
+    .carousel-indicators {
+      bottom: 10%;
+    }
+
+    .carousel-indicators button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin: 0 5px;
     }
 
     .product-card {
@@ -33,14 +66,18 @@ include("session_customer.php");
     .product-card:hover .product-img {
       transform: scale(1.05);
     }
+ 
+    html {
+        scroll-behavior: smooth;
+    }
+
   </style>
 
 
-  </st>
-
-  <link rel="preload" as="image" href="img/tv.webp">
-  <link rel="preload" as="image" href="img/pc.webp">
-  <link rel="preload" as="image" href="img/iphone.webp">
+  
+  <link rel="preload" as="image" href="img/phone.webp">
+  <link rel="preload" as="image" href="img/hppc.webp">
+  <link rel="preload" as="image" href="img/headphone.webp">
 
 
   <?php include("css.php"); ?>
@@ -56,7 +93,7 @@ include("session_customer.php");
 
 <body>
   <!--================ Start Header Menu Area =================-->
-  <?php include("header.php");  ?>
+  <?php include("customer_header.php");  ?>
   <!--================ End Header Menu Area =================-->
 
   <main class="site-main">
@@ -65,13 +102,13 @@ include("session_customer.php");
     <div id="carouselExampleControls" class="carousel slide carousel-fade" data-bs-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img class="d-block w-100" src="img/tv.webp" alt="First slide" style="height:577px">
+          <img class="d-block w-100" src="img/phone.webp" alt="First slide" style="height:577px">
         </div>
         <div class="carousel-item">
-          <img class="d-block w-100" src="img/pc.webp" alt="Second slide" style="height:577px">
+          <img class="d-block w-100" src="img/hppc.webp" alt="Second slide" style="height:577px">
         </div>
         <div class="carousel-item">
-          <img class="d-block w-100" src="img/iphone.webp" alt="Third slide" style="height:577px">
+          <img class="d-block w-100" src="img/headphone.webp" alt="Third slide" style="height:577px">
         </div>
       </div>
       <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -89,16 +126,23 @@ include("session_customer.php");
     <!-- End Filter Bar -->
 
     <?php
+    $filter = "";
+
+    if (isset($_GET['category_id']) && !empty($_GET['category_id'])) {
+        $cat_id = mysqli_real_escape_string($conn, $_GET['category_id']);
+        $filter = " AND product_entry.category_id = '$cat_id'";
+    }
+
     $select = "SELECT * FROM product_size_price 
     JOIN product_entry ON product_size_price.pe_code = product_entry.pe_code 
-    WHERE product_size_price.psp_id = psp_id";
+    WHERE product_size_price.psp_id = product_size_price.psp_id $filter";
 
     $res = mysqli_query($conn, $select);
     ?>
 
 
 
-    <div class="trending-products">
+    <div class="trending-products"  id="product-section">
       <!-- Subcategories or Products will load here dynamically -->
     </div>
 
@@ -128,7 +172,7 @@ include("session_customer.php");
                   <div class="card-body text-center">
                     <h6 class="card-subtitle text-muted mb-1"><?php echo $row['pcolor']; ?></h6>
                     <h5 class="card-title fw-bold mb-2">₹<?php echo $row['pro_sale_price']; ?></h5>
-                    <a href="customer_product.php?psp_id=<?php echo $row['psp_id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill">View Product</a>
+                    <a href="customersingle_product.php?psp_id=<?php echo $row['psp_id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill">View Product</a>
                   </div>
                 </div>
               </div>

@@ -88,7 +88,7 @@ include("session_admin.php");
                   </div>
                   <div class="form-group">
                     <label for="subcategoryname">Subcategory Name</label>
-                    <input type="text" name="subcategoryname" class="form-control" id="subcategoryname" value="<?php echo $f['subcategory_name'];  ?>" required onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)" pattern="[A-Z a-z  ]{2,}" title="Minimum 3 Character Required">
+                    <input type="text" name="subcategoryname" class="form-control" id="subcategoryname" value="<?php echo $f['subcategory_name'];  ?>" required onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32) || (event.charCode >= 48 && event.charCode <= 57)" pattern="[A-Z a-z 0-9  ]{2,}" title="Minimum 3 Character Required">
                   </div>
                 </div>
                 <!-- /.card-body -->
@@ -115,7 +115,7 @@ include("session_admin.php");
                   </div>
                   <div class="form-group">
                   <label for="subcategoryname">Subcategory Name</label>
-                    <input type="text" name="subcategoryname" class="form-control" id="subcategoryname" placeholder="Enter Subcategory" required onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)" pattern="[A-Z a-z  ]{2,}" title="Minimum 3 Character Required">
+                    <input type="text" name="subcategoryname" class="form-control" id="subcategoryname" placeholder="Enter Subcategory" required onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32) || (event.charCode >= 48 && event.charCode <= 57)" pattern="[A-Z a-z 0-9 ]{2,}" title="Minimum 3 Character Required">
                   </div>
                 </div>
                 <!-- /.card-body -->

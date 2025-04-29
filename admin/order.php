@@ -55,7 +55,7 @@ include("session_admin.php");
                     </tr>
 		   <?php
 		   $i=1;
-		   $select="select * from c_purchase";
+		   $select = "SELECT cp.* FROM c_purchase cp";
 		   $res=mysqli_query($conn,$select);
 		   while($row=mysqli_fetch_array($res))
 		   {
@@ -67,12 +67,10 @@ include("session_admin.php");
 		   <td><?php echo $row['cp_address']; ?> - <?php echo $row['cp_pincode']; ?></td>
 		   <td><?php echo $row['cp_contact']; ?></td>
 		   <td><a href="cus_product.php?p=<?php echo $row['cp_code']; ?>" class="btn btn-info">View Product</a></td>
-		  <?php /*?><td><a href="product_tracking.php?t=<?php echo $row['cp_code']; ?>" class="btn btn-warning">Product Tracking</a></td><?php */?>
 		   </tr>
 		   <?php
 		      $i++;
 		   }
-		
 		   ?>
 		   </table> 
             </div>

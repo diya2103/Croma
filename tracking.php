@@ -1,4 +1,5 @@
 <?php 
+
 include("connection.php");
 include("session_customer.php");
 
@@ -12,7 +13,7 @@ include("session_customer.php");
 ol.progtrckr {
     margin: 0;
     padding: 0;
-    list-style-type none;
+    list-style-type: none;
 }
 
 ol.progtrckr li {
@@ -74,99 +75,90 @@ ol.progtrckr li.progtrckr-todo:before {
 	<!--================ End Header Menu Area =================-->
 
   <main class="site-main">
-    
-    
     <section class="section-margin calc-200px">
       <div class="container">
         <div class="section-intro pb-200px">
-          <center><h2>Product Tracking -<?php echo $_REQUEST['tr'];?> </h2></center>
+          <center><h2>Order Tracking</h2></center>
         </div>
         <div class="">
             <center>
 			<?php
-					  $user = $_SESSION['customer'];
-					  $t=$_REQUEST['t'];
-					  $sor = "select * from c_cart where cc_username = '$user' AND (cc_status = 'ordered' OR cc_status = 'process' OR cc_status = 'dispatched' OR cc_status = 'cancel' OR cc_status = 'delivered' OR cc_status = 'Return') and cc_id='$t'";
-					  $ror = mysqli_query($conn,$sor);
-					  if(mysqli_num_rows($ror))
-					  {
-					  	$i = 1;
-						while($wor = mysqli_fetch_array($ror))
-						{
-					?>
-								<ol class="progtrckr" data-progtrckr-steps="5">
-									<?php
-									
-									if($wor['cc_status'] == 'process')
-									{
-									?>
-									<li class="progtrckr-done">Ordered</li><!--
-								 --><li class="progtrckr-done">Process</li><!--
-								 --><li class="progtrckr-todo">Dispatched</li><!--
-								 --><li class="progtrckr-todo">Delivered</li>
-									<?php
-									}
-									else if($wor['cc_status'] == 'dispatched')
-									{
-									?>
-									<li class="progtrckr-done">Ordered</li><!--
-								 --><li class="progtrckr-done">Process</li><!--
-								 --><li class="progtrckr-done">Dispatched</li><!--
-								 --><li class="progtrckr-todo">Delivered</li>
-									<?php
-									}
-									elseif($wor['cc_status'] == 'delivered')
-									{
-									?>
-									<li class="progtrckr-done">Ordered</li><!--
-								 --><li class="progtrckr-done">Process</li><!--
-								 --><li class="progtrckr-done">Dispatched</li><!--
-								 --><li class="progtrckr-done">Delivered</li>
-									<?php
-									}
-									elseif($wor['cc_status'] == 'cancel')
-									{
-									?>
-									<li class="progtrckr-done">Ordered</li><!--
-									 --> <li class="progtrckr-done">Cancel</li><br><br><br>
-								<b style="color:red"> Cancel Reason :</b> <b><?php echo $wor['cancel_desc']; ?></b>
-									<?php
-									}
-									elseif($wor['cc_status'] == 'return')
-									{
-									?>
-									<li class="progtrckr-done">Ordered</li><!--
-								 
-								 --><li class="progtrckr-done">Return</li>
-								 
-								<br><br><br>
-								<b style="color:red"> Return Reason :</b> <b><?php echo $wor['return_desc']; ?></b> <br><b style="color:orange">Return order will be picked up within 24 hours</b><br>
-								<b style="color:green">Picked up Date :  <?php $d=$wor['return_date']; $dt = strtotime("$d"); echo date("Y-m-d", strtotime("+1 days", $dt))?> (10:00 AM to 6:00 PM)</b>
-								
-									<?php
-									}
-									else
-									{
-									?>
-									<li class="progtrckr-done">Ordered</li><!--
-								 --><li class="progtrckr-todo">Process</li><!--
-								 --><li class="progtrckr-todo">Dispatched</li><!--
-								 --><li class="progtrckr-todo">Delivered</li>
-									<?php
-									}
-									?>
-								</ol>
-								<?php
-								}
-								}
-								?>
-								</center>
-        
+            $user = $_SESSION['customer'];
+            $order_id = $_GET['t'];
+            $purchase_code = $_GET['p'];
+            
+            // Get order details with purchase information
+            $query = "SELECT c.*, cp.* FROM c_cart c 
+                     JOIN c_purchase cp ON c.cp_code = cp.cp_code 
+                     WHERE c.cc_username = '$user' AND c.cc_id = '$order_id'";
+            $result = mysqli_query($conn, $query);
+            
+            if(mysqli_num_rows($result) > 0) {
+                $order = mysqli_fetch_array($result);
+                $status = $order['cc_status'];
+                
+                echo "<h3>Order Code: " . $order['cp_code'] . "</h3>";
+                echo "<p>Order ID: " . $order_id . "</p>";
+                echo "<p>Current Status: <strong>" . ucfirst($status) . "</strong></p>";
+                
+                // Display tracking progress
+                echo '<ol class="progtrckr" data-progtrckr-steps="5">';
+                
+                // Define all possible statuses
+                $statuses = array('ordered', 'process', 'dispatched', 'delivered');
+                
+                foreach($statuses as $s) {
+                    // Modified logic: "ordered" is always done, others follow normal progression
+                    $class = ($s == 'ordered' || $s == $status || array_search($s, $statuses) < array_search($status, $statuses)) 
+                            ? 'progtrckr-done' 
+                            : 'progtrckr-todo';
+                    echo '<li class="' . $class . '">' . ucfirst($s) . '</li>';
+                }
+                
+                echo '</ol>';
+                
+                // Display additional order information
+                echo "<div class='order-details' style='margin-top: 20px;'>";
+                echo "<h4>Order Details</h4>";
+                echo "<p>Order Date: " . $order['cc_date'] . "</p>";
+                echo "<p>Total Amount: ₹" . $order['cc_total'] . "</p>";
+                echo "<p>Shipping Address: " . $order['cp_address'] . " - " . $order['cp_pincode'] . "</p>";
+                echo "<p>Contact: " . $order['cp_contact'] . "</p>";
+                
+                // Display cancel/return information if applicable
+                if($status == 'cancel') {
+                    echo "<div class='alert alert-warning'>";
+                    echo "<h5>Cancellation Details</h5>";
+                    echo "<p>Cancel Date: " . $order['cancel_date'] . "</p>";
+                    echo "<p>Cancel Reason: " . $order['cancel_desc'] . "</p>";
+                    echo "<p>Status: " . $order['cancel_status'] . "</p>";
+                    echo "</div>";
+                } else if($status == 'return') {
+                    echo "<div class='alert alert-info'>";
+                    echo "<h5>Return Details</h5>";
+                    echo "<p>Return Date: " . $order['return_date'] . "</p>";
+                    echo "<p>Return Reason: " . $order['return_desc'] . "</p>";
+                    echo "<p>Status: " . $order['return_status'] . "</p>";
+                    echo "</div>";
+                }
+                
+                echo "</div>";
+                
+                // Add a back button
+                echo '<div style="margin-top: 20px;">';
+                echo '<a href="cus_product.php?p=' . $order['cp_code'] . '" class="btn btn-primary">Back to Order Details</a>';
+                echo '</div>';
+            } else {
+                echo "<div class='alert alert-danger'>Order not found or you don't have permission to view this order.</div>";
+                echo '<div style="margin-top: 20px;">';
+                echo '<a href="cus_product.php" class="btn btn-primary">Back to Orders</a>';
+                echo '</div>';
+            }
+            ?>
+            </center>
         </div>
       </div>
     </section>
-    
-
   </main>
 
 
